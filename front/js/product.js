@@ -1,12 +1,10 @@
+/* METTRE COM*/
 const productId = new URL(location.href).searchParams.get("id");
-console.log(productId); /* A SUPP*/
 
- /* METTRE COM*/
+ /* Récupère les données de l'API, les convertis en .json et les stocke dans l'array data*/
  fetch('http://localhost:3000/api/products/'+productId)
  .then(res => res.json())  /* convertis les données en .json*/
  .then(data => {
-
-    console.log(data.imageUrl)
 
     let img = document.querySelector("section.item img")
     img.setAttribute("src", data.imageUrl)
@@ -20,9 +18,15 @@ console.log(productId); /* A SUPP*/
 
     let price = document.querySelector("#price")
     price.textContent = data.price
-
-
-
-
+    
+    /* parcours chaque couleur de l'array Colors en créant l'élément correspondant pour la liste*/
+    for (let j in data.colors) {
+        
+        let colors = document.querySelector("#colors")
+        const color = document.createElement("option")
+        color.setAttribute("value", data.colors[j])
+        color.textContent = data.colors[j]
+        colors.appendChild(color)
+    }
 
  })
