@@ -1,17 +1,16 @@
 let itemsConteneur = document.getElementById("items"); 
-const productNumber = 8; /* Trouver comment compter automatiquement nb produit dans API*/
 
-/* boucle for avec 8 itérations*/
-for (let i = 0; i <= productNumber; i++) {
-   console.log("Produit numéro :"+ i);
-
-   /* Récupère les données de l'API et crée chaque carte produit*/
+   /* Récupère les données de l'API, les convertis en .json et les stocke dans l'array data*/
    fetch('http://localhost:3000/api/products')
-   .then(res => res.json())  /* convertis les données en .json*/
+   .then(res => res.json())
    .then(data => {
+
+      /* boucle for avec autant d'itérations que de produit dans la base de donnée -> MAJ dynamique */
+      for (let i in data) {
+   
         const a = document.createElement("a")
         itemsConteneur.appendChild(a)
-        a.setAttribute("href", "http://localhost:3000/api/products/"+data[i]._id)
+        a.setAttribute("href", "file:///C:/Users/b_myr/Documents/MyriamBouchemoua_5_05052022/front/html/product.html?id="+data[i]._id)
 
         const article = document.createElement("article")
         a.appendChild(article)
@@ -31,5 +30,5 @@ for (let i = 0; i <= productNumber; i++) {
         p.classList.add("productDescription")
         p.textContent = data[i].description
 
+      }
    })
-}
