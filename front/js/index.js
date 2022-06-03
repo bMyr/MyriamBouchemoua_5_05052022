@@ -8,6 +8,7 @@ let itemsConteneur = document.getElementById("items")
       /* boucle for avec autant d'itérations que de produit dans la base de donnée -> MAJ dynamique */
       for (let i in data) {
          
+        /* Crée chaque élément composant les cartes produit et les ajoute au DOM */ 
         const a = document.createElement("a")
         itemsConteneur.appendChild(a)
         a.setAttribute("href", "file:///C:/Users/b_myr/Documents/MyriamBouchemoua_5_05052022/front/html/product.html?id="+data[i]._id)
