@@ -98,6 +98,7 @@ const productId = new URL(location.href).searchParams.get("id");
 
         // si AUCUN produit dans le localStorage : 
         // Je crée un array productLocalStorage et j'y ajoute mes choix produit 
+        
         else {
             productLocalStorage=[];
             productLocalStorage.push(productChoice);
