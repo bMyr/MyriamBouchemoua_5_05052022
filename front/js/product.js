@@ -37,7 +37,6 @@ const productId = new URL(location.href).searchParams.get("id");
     let productColorValue ="";
     productColorElement.addEventListener('change', (event) => {
         productColorValue = event.target.value
-        console.log(productColorValue)
     });
   
 
@@ -46,7 +45,6 @@ const productId = new URL(location.href).searchParams.get("id");
     let productQuantityValue ="";
     productQuantityElement.addEventListener('change', (event) => {
         productQuantityValue = event.target.value
-        console.log(productQuantityValue)
     });
 
 
@@ -54,21 +52,61 @@ const productId = new URL(location.href).searchParams.get("id");
     const btn = document.querySelector("#addToCart");
     btn.addEventListener("click", () =>{
         
-         /* On crée un objet contenant nos choix produit */
+         // On crée un objet pour stocker nos choix produit  
         let productChoice = {
             id: productId,
             color: productColorValue,
             quantity: productQuantityValue 
         };
 
-        console.log(productChoice);
 
-    
-    
-})
+        // On vérifie si un produit existe déjà dans le local storage
+        //JSON.parse convertit les objets au format JSON en objet Javascript 
+        let productLocalStorage = JSON.parse(localStorage.getItem("product"));
+        
+        // si produit existant dans le localStorage : 
+        if (productLocalStorage) {
+        
+            //Je vérifie si un produit similaire existe déjà :
+            //Dans l'array productLocalStorage, je récupère l'index de l'objet
+            // ayant le même id et la même couleur que le produit que je viens d'ajouter (productChoice)
+            let searchIndex = productLocalStorage.findIndex((product) => product.color==(productChoice["color"]) && product.id==(productChoice["id"]) );
+            //Si aucun produit similaire trouvé, la variable searchIndex sera = à -1
 
+            // si produit similaire déjà existant dans le panier : 
+            if (parseInt(searchIndex) >= 0)  { 
+                // J'aditionne la nouvelle quantité à l'ancienne
+                productLocalStorage[searchIndex].quantity = parseInt(productLocalStorage[searchIndex].quantity) + parseInt(productChoice["quantity"]);
 
+                /* Envoi de l'objet productLocalStorage dans le localStorage */
+                /* JSON.stringify convertit les objet Javascript en objets au format JSON */
+                localStorage.setItem("product", JSON.stringify(productLocalStorage));
+                console.log("Produit déjà EXISTANT dans le panier, quantité bien mise à jour ! ");
+            }
+            
+            // pas de produit similaire dans le panier:
+            else {
+                //J'ajoute mes nouveaux choix produit à l'array productLocalStorage 
+                productLocalStorage.push(productChoice);
+                /* Envoi de l'objet productLocalStorage dans le localStorage */
+                /* JSON.stringify convertit les objet Javascript en objets au format JSON */
+                localStorage.setItem("product", JSON.stringify(productLocalStorage));
+                console.log("Produit NON EXISTANT dans le panier, bien ajouté ! ");
+                
+            }
+        }
 
+        // si AUCUN produit dans le localStorage : 
+        // Je crée un array productLocalStorage et j'y ajoute mes choix produit 
+        else {
+            productLocalStorage=[];
+            productLocalStorage.push(productChoice);
+            localStorage.setItem("product", JSON.stringify(productLocalStorage));
+            console.log("Premier produit ajouté au panier !");
+
+        }
+
+    })  
 
  })
 
