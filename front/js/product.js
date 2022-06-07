@@ -82,6 +82,7 @@ const productId = new URL(location.href).searchParams.get("id");
                 /* JSON.stringify convertit les objet Javascript en objets au format JSON */
                 localStorage.setItem("product", JSON.stringify(productLocalStorage));
                 console.log("Produit déjà EXISTANT dans le panier, quantité bien mise à jour ! ");
+                alert("Produit(s) bien ajouté(s) au panier !");
             }
             
             // pas de produit similaire dans le panier:
@@ -92,18 +93,20 @@ const productId = new URL(location.href).searchParams.get("id");
                 /* JSON.stringify convertit les objet Javascript en objets au format JSON */
                 localStorage.setItem("product", JSON.stringify(productLocalStorage));
                 console.log("Produit NON EXISTANT dans le panier, bien ajouté ! ");
+                alert("Produit(s) bien ajouté(s) au panier !");
                 
             }
         }
 
         // si AUCUN produit dans le localStorage : 
         // Je crée un array productLocalStorage et j'y ajoute mes choix produit 
-        
+
         else {
             productLocalStorage=[];
             productLocalStorage.push(productChoice);
             localStorage.setItem("product", JSON.stringify(productLocalStorage));
             console.log("Premier produit ajouté au panier !");
+            alert("Produit(s) bien ajouté(s) au panier !");
 
         }
 
