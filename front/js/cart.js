@@ -1,3 +1,5 @@
+//AFFICHAGE PRODUIT PANIER................................................................................
+
 // On récupère les produits dans le local storage
 //JSON.parse convertit les objets au format JSON en objet Javascript 
 let productLocalStorage = JSON.parse(localStorage.getItem("product"));
@@ -11,15 +13,13 @@ for (i in productLocalStorage) {
     let productColor = product["color"];
     let productQuantity =  product["quantity"];
 
-    
 
     // Récupère les données de l'API grâce à la variable proDuctId, 
     //les convertis en .json et les stocke dans l'array data
     fetch('http://localhost:3000/api/products/'+productId)
-    .then(res => res.json())  /* convertis les données en .json*/
+    .then(res => res.json())  // convertis les données en .json
     .then(data => {
 
-        console.log(data)
         let cartItemsConteneur = document.getElementById("cart__items")
 
         const article = document.createElement("article")
@@ -88,21 +88,58 @@ for (i in productLocalStorage) {
         divDelete.appendChild(pDelete)
 
 
-          /* TEST
-          On écoute le bouton Supprimer au panier avec l'Evenement click
-    
+// MODIFIER QUANTITE..............................................................................
+
+
+// On écoute la quantité modifée avec l'Evenement Change et on enregistre aussitôt 
+//la nouvelle valeur choisie par l'utilisateur dans la variable productQuantity
+
+     input.addEventListener('change', (event) => {
+        productQuantity = event.target.value
+
+        // mise à jour de la nouvelle quantité dans l'objet Product
+        product.quantity = productQuantity
+
+        // Je remplace l'ancien object Product dans l'array productLocalStorage par le nouveau
+        var productIndex = productLocalStorage.indexOf(product)
+        productLocalStorage.splice(productIndex, 1, product)
+
+        // Remplacement dans le local storage 
+        localStorage.setItem("product", JSON.stringify(productLocalStorage));
+     });
+
+
+// SUPPRIMER PRODUIT................................................................................
+
+        // On écoute le bouton Supprimer au panier avec l'Evenement click
          pDelete.addEventListener("click", () =>{
-            console.log("product :"+ JSON.stringify(product))
-            localStorage.removeItem("product[i]");
+        
+            // je récupère l'index du produit dans l'array productLocalStorage et je le retire
+             var productIndex = productLocalStorage.indexOf(product)
+             productLocalStorage.splice(productIndex, 1)
+
+            // surpprime le produit du DOM en récupérant l'ancètre Article le plus proche du btn supprimer
+            const currentArticle = pDelete.closest('.cart__item');
+            currentArticle.remove()
+
+             // Remplacement de l'ancien array dans le Local storage par le nouveau
+             // JSON.stringify convertit les objet Javascript en objets au format JSON
+             
+             localStorage.setItem("product", JSON.stringify(productLocalStorage));
+
+
+            
            
-         }) */
+         }) 
         
 
 
 // FETCH end 
  }) 
 
-
+ 
 // FOR end
 } 
+
+
 
