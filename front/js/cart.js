@@ -88,22 +88,21 @@ for (i in productLocalStorage) {
         divDelete.appendChild(pDelete)
 
 
+          /* TEST
+          On écoute le bouton Supprimer au panier avec l'Evenement click
+    
+         pDelete.addEventListener("click", () =>{
+            console.log("product :"+ JSON.stringify(product))
+            localStorage.removeItem("product[i]");
+           
+         }) */
+        
 
 
-
-
-
-
-
-
-
-
-
-
-
-// FETCH end
+// FETCH end 
  }) 
 
 
 // FOR end
 } 
+

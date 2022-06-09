@@ -42,7 +42,7 @@ const productId = new URL(location.href).searchParams.get("id");
 
     /*Même principe mais pour la quantité selectionnée pour le produit*/
     let productQuantityElement = document.querySelector("#quantity");
-    let productQuantityValue ="";
+    let productQuantityValue = "";
     productQuantityElement.addEventListener('change', (event) => {
         productQuantityValue = event.target.value
     });
