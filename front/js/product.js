@@ -1,4 +1,4 @@
-/* METTRE COM*/
+// On récupère l'id produit dans l'url 
 const productId = new URL(location.href).searchParams.get("id");
 
  /* Récupère les données de l'API, les convertis en .json et les stocke dans l'array data*/
@@ -7,6 +7,10 @@ const productId = new URL(location.href).searchParams.get("id");
  .then(data => {
 
     /* Attribue aux élements de la carte produit les données du produit choisi */
+
+    let headTitle = document.querySelector("head > title")
+    headTitle.textContent = data.name
+
     let img = document.querySelector("section.item img")
     img.setAttribute("src", data.imageUrl)
     img.setAttribute("alt", data.altTxt)
