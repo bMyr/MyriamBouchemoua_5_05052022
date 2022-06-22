@@ -179,11 +179,11 @@ function totalPriceUpdate() {
 
         pPrice.textContent = ((data.price*NewProductQuantity)+" €")
         
-        // OPTION 1 : window.location.reload(); --> Raffraichit la page pour mettre le prix et le total à jour 
-
+        // Mise à jour instantanée des totaux prix et quantité dans le DOM 
         totalQuantityUpdate();
         totalPriceUpdate();
 
+        // Option alternative : window.location.reload(); --> Raffraichit la page pour mettre le prix et le total à jour 
      });
 
 
@@ -219,8 +219,6 @@ function totalPriceUpdate() {
 
 
 // ENVOYER FORMULAIRE COMMANDE...............................................................................
-
-
 
 /* On écoute le bouton Commander au panier avec l'Evenement click*/
 const orderBtn = document.querySelector("#order");
@@ -276,8 +274,6 @@ orderBtn.addEventListener("click", (e) =>{
         // Ainsi que l'objet Order qui contiendra cet array ainsi + l'objet Contact qui contient les infos de l'acheteur
         
         let productsID = productLocalStorage.map(a => a.id);
-        console.log(productsID);
-
 
         const order = {
             contact: {
@@ -290,26 +286,28 @@ orderBtn.addEventListener("click", (e) =>{
             products: productsID, 
         };
 
-        console.log(order);
+        let options = {
+            method: 'POST',
+            body: JSON.stringify(order),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
 
-        e.preventDefault();
+        fetch('http://localhost:3000/api/products/order', options)
+            .then((res) => res.json())
+            .then((data) => {
+                //On vide le localStorage pour pouvoir passer de nouvelles commandes ultérieurement
+                localStorage.clear();
 
-
-    //localStorage.setItem("contact", JSON.stringify(contact));
-
-
-
-
+                //Changement de page avec l'id commande dans l'url
+                document.location.href = "confirmation.html?orderId="+data.orderId
+            })
         
     }
 
 
     
-
-      
-
-
-
 
 
 
