@@ -3,7 +3,11 @@
 // On récupère les produits dans le local storage
 //JSON.parse convertit les objets au format JSON en objet Javascript 
 let productLocalStorage = JSON.parse(localStorage.getItem("product"));
-console.log(productLocalStorage);
+
+// déclaration variable pour la quantité totale
+let totalQuantityValue = 0;
+// déclaration variable pour la quantité totale
+let totalPriceValue = 0;
 
 
 // récupère chaque produit du local storage et les données associées (id, color et quantity)
@@ -88,6 +92,72 @@ for (i in productLocalStorage) {
         divDelete.appendChild(pDelete)
 
 
+
+// QUANTITE ET PRIX TOTAL ................................................................................
+ 
+let totalQuantity = document.getElementById("totalQuantity");
+totalQuantityValue += productQuantity;
+totalQuantity.innerHTML = totalQuantityValue;
+
+let totalPrice = document.getElementById("totalPrice");
+totalPriceValue += (data.price*productQuantity);
+totalPrice.innerHTML = totalPriceValue;
+
+
+// MODIFIER OU SUPPRIMER PRODUIT PANIER......................................................................
+
+
+// Déclaration fonctions pour mise à jour DOM prix et quantité total
+// en cas de modification quantité ou suppression de produit 
+
+function totalQuantityUpdate() {
+    // je récupère chaque quantité du DOM dans l'array ListOfQuantityValues
+    let listOfQuantityElement = document.getElementsByClassName("itemQuantity");
+    let listOfQuantityValues = [];
+    for (y in listOfQuantityElement) {
+        listOfQuantityValues.push(listOfQuantityElement[y].value);
+    }
+
+    // Je retire les "undefined"
+    listOfQuantityValues = listOfQuantityValues.filter((el) => {
+        return el != undefined;
+    });
+
+    // je convertis en nombre les elements du tableau
+    listOfQuantityValues = listOfQuantityValues.map((x) => parseFloat(x));
+
+    // j'additionne les quantités de l'array pour avoir la quantité totale
+    let sumOfQuantity = 0;
+    for (i in listOfQuantityValues) {
+        sumOfQuantity += listOfQuantityValues[i];
+    }
+    totalQuantity.innerHTML = sumOfQuantity;
+}
+
+function totalPriceUpdate() {
+    // je récupère dans le DOM chaque element p contenant le prix (dernière élement de la div parent)
+    let listOfPriceElement = Array.from(document.querySelectorAll(".cart__item__content__description > p:last-child"));
+    let listOfPriceValues = [];
+
+    // je récupère chaque prix, je retire le dernier caractère € et j'ajoute le prix à l'array listOfPriceValues
+    for (p in listOfPriceElement ) {
+        let currentPriceElement = listOfPriceElement[p].textContent; 
+        currentPriceElement = currentPriceElement.slice(0, currentPriceElement.length - 1);
+        listOfPriceValues.push(currentPriceElement);
+    }
+
+    // je convertis en nombre les elements du tableau
+    listOfPriceValues = listOfPriceValues.map((x) => parseFloat(x));
+
+    // j'additionne les prix de l'array listOfPriceValues pour avoir le prix total
+    let sumOfPrices = 0;
+    for (i in listOfPriceValues ) {
+        sumOfPrices += listOfPriceValues[i];
+    }
+    totalPrice.innerHTML = sumOfPrices;
+}
+
+
 // MODIFIER QUANTITE..............................................................................
 
 
@@ -95,10 +165,10 @@ for (i in productLocalStorage) {
 //la nouvelle valeur choisie par l'utilisateur dans la variable productQuantity
 
      input.addEventListener('change', (event) => {
-        productQuantity = event.target.value
+        NewProductQuantity = event.target.value
 
         // mise à jour de la nouvelle quantité dans l'objet Product
-        product.quantity = productQuantity
+        product.quantity = parseInt(NewProductQuantity)
 
         // Je remplace l'ancien object Product dans l'array productLocalStorage par le nouveau
         var productIndex = productLocalStorage.indexOf(product)
@@ -106,6 +176,14 @@ for (i in productLocalStorage) {
 
         // Remplacement dans le local storage 
         localStorage.setItem("product", JSON.stringify(productLocalStorage));
+
+        pPrice.textContent = ((data.price*NewProductQuantity)+" €")
+        
+        // OPTION 1 : window.location.reload(); --> Raffraichit la page pour mettre le prix et le total à jour 
+
+        totalQuantityUpdate();
+        totalPriceUpdate();
+
      });
 
 
@@ -122,24 +200,119 @@ for (i in productLocalStorage) {
             const currentArticle = pDelete.closest('.cart__item');
             currentArticle.remove()
 
-             // Remplacement de l'ancien array dans le Local storage par le nouveau
-             // JSON.stringify convertit les objet Javascript en objets au format JSON
+            // Remplacement de l'ancien array dans le Local storage par le nouveau
+            // JSON.stringify convertit les objet Javascript en objets au format JSON
              
-             localStorage.setItem("product", JSON.stringify(productLocalStorage));
+            localStorage.setItem("product", JSON.stringify(productLocalStorage));
 
-
-            
-           
+            totalQuantityUpdate();
+            totalPriceUpdate();
+        
          }) 
         
-
 
 // FETCH end 
  }) 
 
- 
 // FOR end
 } 
 
+
+// ENVOYER FORMULAIRE COMMANDE...............................................................................
+
+
+
+/* On écoute le bouton Commander au panier avec l'Evenement click*/
+const orderBtn = document.querySelector("#order");
+orderBtn.addEventListener("click", (e) =>{ 
+
+// RECUPERER ET VERIFIER LES INFOS..........................................................................
+
+    let firstNameInput = document.getElementById("firstName").value;
+    let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+    let lastNameInput = document.getElementById("lastName").value;
+    let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+    let addressInput = document.getElementById("address").value;
+    let addressErrorMsg = document.getElementById("addressErrorMsg");
+    let cityInput = document.getElementById("city").value;
+    let cityErrorMsg = document.getElementById("cityErrorMsg");
+    let emailInput = document.getElementById("email").value;
+    let emailErrorMsg = document.getElementById("emailErrorMsg");
+
+
+    // Déclaration des expressions régulières (regex)
+    // Pour le prénom, le nom et la ville, on utilise la même
+   
+    let textRegex = new RegExp("^[a-zA-Z-àâäéèêëïîôöùûüç ,.'-]+$");
+    let addressRegex= new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
+    //let emailRegex = new RegExp("^[a-zA-Z0-9._-]+[@]{1}[a-zA-Z0-9._-]+[.]{1}[a-z]{2,10}$");
+    // Pas besoin, l'input de type EMAIL vérifie déjà le format du texte inséré 
+    
+
+    
+  //On vérifie chaque donnée avec une regex
+  //En cas d'erreur on affiche un msg et on empêche l'envoi du formulaire avec  e.preventDefault();
+  //Pas besoin de verifier si champs vide, car présence d'un "required" pour chaque input dans le formulaire
+  
+    if (!textRegex.test(firstNameInput)) {
+        firstNameErrorMsg.innerHTML = "Veuillez renseigner le champ Prénom correctement.";
+        e.preventDefault();
+
+    } else if (!textRegex.test(lastNameInput)) {
+        lastNameErrorMsg.innerHTML = "Veuillez renseigner le champ Nom correctement.";
+        e.preventDefault();
+
+    } else if (!addressRegex.test(addressInput)) {
+        addressErrorMsg.innerHTML = "Veuillez renseigner le champ Adresse correctement.";
+        e.preventDefault();
+
+    } else if (!textRegex.test(cityInput)) {
+        cityErrorMsg.innerHTML = "Veuillez renseigner le champ Ville correctement.";
+        e.preventDefault();
+
+    } else {
+
+        // Si le formulaire est valide, on créé l'array product-ID qui contiendra les ID en string des produits achetés
+        // Ainsi que l'objet Order qui contiendra cet array ainsi + l'objet Contact qui contient les infos de l'acheteur
+        
+        let productsID = productLocalStorage.map(a => a.id);
+        console.log(productsID);
+
+
+        const order = {
+            contact: {
+            firstName: firstNameInput,
+            lastName: lastNameInput,
+            address: addressInput,
+            city: cityInput,
+            email: emailInput,
+            },
+            products: productsID, 
+        };
+
+        console.log(order);
+
+        e.preventDefault();
+
+
+    //localStorage.setItem("contact", JSON.stringify(contact));
+
+
+
+
+        
+    }
+
+
+    
+
+      
+
+
+
+
+
+
+}) 
 
 
