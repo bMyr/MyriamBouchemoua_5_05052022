@@ -30,6 +30,5 @@ let itemsConteneur = document.getElementById("items")
         article.appendChild(p)
         p.classList.add("productDescription")
         p.textContent = data[i].description
-
       }
    })
