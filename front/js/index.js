@@ -11,7 +11,7 @@ let itemsConteneur = document.getElementById("items")
         /* Crée chaque élément composant les cartes produit et les ajoute au DOM */ 
         const a = document.createElement("a")
         itemsConteneur.appendChild(a)
-        a.setAttribute("href", "file:///C:/Users/b_myr/Documents/MyriamBouchemoua_5_05052022/front/html/product.html?id="+data[i]._id)
+        a.setAttribute("href", "../html/product.html?id="+data[i]._id)
 
         const article = document.createElement("article")
         a.appendChild(article)

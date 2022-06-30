@@ -58,7 +58,7 @@ for (i in productLocalStorage) {
         divDescription.appendChild(pColor)
 
         const pPrice = document.createElement("p")
-        pPrice.textContent = ((data.price*productQuantity) +" €") // PRIX DOIT SE METTRE A JR QUAND CHANGEMENT QNT
+        pPrice.textContent = ((data.price*productQuantity) +" €") 
         divDescription.appendChild(pPrice)
 
         const divSettings = document.createElement("div")
@@ -240,14 +240,101 @@ orderBtn.addEventListener("click", (e) =>{
 
     let textRegex = new RegExp("^[a-zA-Z-àâäéèêëïîôöùûüç ,.'-]+$");
     let addressRegex= new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
-    //let emailRegex = new RegExp("^[a-zA-Z0-9._-]+[@]{1}[a-zA-Z0-9._-]+[.]{1}[a-z]{2,10}$");
-    // Pas besoin, l'input de type EMAIL vérifie déjà le format du texte inséré 
+    let emailRegex = new RegExp("^[a-zA-Z0-9._-]+[@]{1}[a-zA-Z0-9._-]+[.]{1}[a-z]{2,10}$");
     
 
     //On vérifie chaque donnée avec une regex
     //En cas d'erreur on affiche un msg et on empêche l'envoi du formulaire avec  e.preventDefault();
     //Pas besoin de verifier si champs vide, car présence d'un "required" pour chaque input dans le formulaire
-  
+
+
+    function validateForm() {
+
+        if (!textRegex.test(firstNameInput)) {
+            firstNameErrorMsg.innerHTML = "Veuillez renseigner le champ Prénom correctement.";
+            return false;
+        } else {
+            firstNameErrorMsg.innerHTML = "";
+        }
+        if (!textRegex.test(lastNameInput)) {
+            lastNameErrorMsg.innerHTML = "Veuillez renseigner le champ Nom correctement.";
+            return false;
+        } else {
+            lastNameErrorMsg.innerHTML = "";
+        }
+        if (!addressRegex.test(addressInput)) {
+            addressErrorMsg.innerHTML = "Veuillez renseigner le champ Adresse correctement.";
+            return false;
+        } else {
+            addressErrorMsg.innerHTML = "";
+        }
+        if (!textRegex.test(cityInput)) {
+            cityErrorMsg.innerHTML = "Veuillez renseigner le champ Ville correctement.";
+            return false;
+        } else {
+            cityErrorMsg.innerHTML = "";
+        }
+        if (!emailRegex.test(emailInput)) {
+            emailErrorMsg.innerHTML = "Veuillez renseigner le champ Mail correctement.";
+            return false;
+        } else {
+            emailErrorMsg.innerHTML = "";
+        }
+
+        return true;
+    }
+
+    if (validateForm()){
+        // Si le formulaire est valide, on créé l'array product-ID qui contiendra les ID en string des produits achetés
+        // Ainsi que l'objet Order qui contiendra cet array ainsi + l'objet Contact qui contient les infos de l'acheteur
+        
+        let productsID = productLocalStorage.map(a => a.id);
+
+        const order = {
+            contact: {
+            firstName: firstNameInput,
+            lastName: lastNameInput,
+            address: addressInput,
+            city: cityInput,
+            email: emailInput,
+            },
+            products: productsID, 
+        };
+
+        let options = {
+            method: 'POST',
+            body: JSON.stringify(order),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        fetch('http://localhost:3000/api/products/order', options)
+            .then((res) => res.json())
+            .then((data) => {
+
+                //On vide le localStorage pour pouvoir passer de nouvelles commandes ultérieurement
+                localStorage.clear();
+
+                //Changement de page avec l'id commande dans l'url
+                document.location.href = "confirmation.html?orderId="+data.orderId
+            })
+            .catch((err) => {
+                e.preventDefault();
+                alert("Il y a eu une erreur : " + err);
+        
+            });
+    } else {
+    
+        // Si le formulaire n'est pas valide, on bloque son envoi
+        e.preventDefault();
+        console.log("erreur dans le formulaire");
+    }
+
+
+
+/* Ancienne version
+
     if (!textRegex.test(firstNameInput)) {
         firstNameErrorMsg.innerHTML = "Veuillez renseigner le champ Prénom correctement.";
         e.preventDefault();
@@ -263,7 +350,9 @@ orderBtn.addEventListener("click", (e) =>{
     } else if (!textRegex.test(cityInput)) {
         cityErrorMsg.innerHTML = "Veuillez renseigner le champ Ville correctement.";
         e.preventDefault();
-
+    } else if (!emailRegex.test(emailInput)) {
+        emailErrorMsg.innerHTML = "Veuillez renseigner le champ Mail correctement.";
+        e.preventDefault();
     } else {
 
         // Si le formulaire est valide, on créé l'array product-ID qui contiendra les ID en string des produits achetés
@@ -300,7 +389,8 @@ orderBtn.addEventListener("click", (e) =>{
                 document.location.href = "confirmation.html?orderId="+data.orderId
             })
 
-    }
+    } 
+    */
 
 })
 
