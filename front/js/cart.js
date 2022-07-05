@@ -167,7 +167,14 @@ for (i in productLocalStorage) {
         input.addEventListener('change', (event) => {
             NewProductQuantity = event.target.value
 
-            // mise à jour de la nouvelle quantité dans l'objet Product
+            // MODIFICATION APRES SOUTENANCE :
+            //Je vérifie que l'utilisateur a bien sélectionné une nouvelle quantité valide 
+            if (NewProductQuantity <= 0 || NewProductQuantity > 100) {
+                alert("Veuillez choisir nouvelle quantité comprise en 1 et 100");
+                e.preventDefault();
+            } else {
+
+                // mise à jour de la nouvelle quantité dans l'objet Product
             product.quantity = parseInt(NewProductQuantity)
 
             // Je remplace l'ancien object Product dans l'array productLocalStorage par le nouveau
@@ -184,6 +191,8 @@ for (i in productLocalStorage) {
             totalPriceUpdate();
 
             // Option alternative : window.location.reload(); --> Raffraichit la page pour mettre le prix et le total à jour 
+            }
+            
         });
 
 
